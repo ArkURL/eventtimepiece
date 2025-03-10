@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Event Timepiece</string>
+    <string name="about">About</string>
+    <string name="welcome_text">Welcome to use event timepiece🎉</string>
+    <string name="fab_content_text">FAB edit</string>
+    <string name="build_version">Build Version: %s</string>
+    <string name="about_dialog_content">See source at %s</string>
+    <string name="cardview_edit_button_content">edit event</string>
+    <string name="cardview_delete_button_content">delete event</string>
+    <string name="text_parent_event_create_time">create time: %s</string>
+    <string name="input_parent_event_name_hint">event name</string>
+    <string name="input_parent_event_content">event content</string>
+    <string name="text_event_title">Event Title</string>
+    <string name="text_event_description">Event Description</string>
+    <string name="text_event_time_cost">1h20m</string>
+    <string name="text_event_title_add">Add New Event</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_event_success">Add Event Success</string>
+    <string name="event_title_is_empty_hint">Event title can\'t be empty</string>
+    <string name="delete_event_dialog_title">Delete Event</string>
+    <string name="delete_event_dialog_content">Are you sure to delete this event?</string>
+    <string name="delete">Delete</string>
+</resources>

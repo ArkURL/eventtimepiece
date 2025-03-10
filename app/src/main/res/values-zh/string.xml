@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">事项时计</string>
+    <string name="about">关于</string>
+    <string name="welcome_text">欢迎使用事项时计🎉</string>
+    <string name="fab_content_text">新增事项编辑</string>
+    <string name="build_version">打包版本号：%s</string>
+</resources>

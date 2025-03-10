@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="cardview_button_size">38dp</dimen>
+    <dimen name="button_radius">32dp</dimen>
+    <dimen name="cardview_button_icon_size">20dp</dimen>
+    <dimen name="cardview_button_icon_radius">19dp</dimen>
+
+    <dimen name="spacing">10dp</dimen>
+</resources>

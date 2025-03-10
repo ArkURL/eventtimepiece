@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_dialog_content">在 %s 上查看源码</string>
+    <string name="cardview_edit_button_content">编辑事项</string>
+    <string name="cardview_delete_button_content">删除事项</string>
+    <string name="text_parent_event_create_time">创建时间：%s</string>
+    <string name="input_parent_event_name_hint">事项名称</string>
+    <string name="input_parent_event_content">事项内容</string>
+    <string name="text_event_title">事项标题</string>
+    <string name="text_event_description">事项描述</string>
+    <string name="text_event_time_cost">1h20m</string>
+    <string name="text_event_title_add">添加新事项</string>
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
+    <string name="add_event_success">添加事项成功</string>
+    <string name="event_title_is_empty_hint">事项标题不能为空</string>
+    <string name="delete_event_dialog_title">删除事项</string>
+    <string name="delete_event_dialog_content">是否确定删除事项？</string>
+    <string name="delete">删除</string>
+</resources>
