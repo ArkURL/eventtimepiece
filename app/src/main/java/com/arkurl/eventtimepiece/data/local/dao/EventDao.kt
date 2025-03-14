@@ -4,8 +4,10 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.arkurl.eventtimepiece.data.local.entity.EventEntity
+import com.arkurl.eventtimepiece.data.local.entity.EventWithParentEntity
 
 @Dao
 interface EventDao {
@@ -21,10 +23,16 @@ interface EventDao {
     @Query("SELECT * FROM event")
     suspend fun queryAllEvents(): List<EventEntity>?
 
+    @Query("SELECT * FROM event where parentEventId is null")
+    suspend fun queryParentEvents(): List<EventEntity>?
+
     @Query("SELECT * FROM event WHERE id = :id")
-    suspend fun querySpecifyEvent(id: Int): EventEntity?
+    suspend fun querySpecifyEvent(id: Long): EventEntity
 
     @Query("SELECT * FROM event WHERE parentEventId = :parentEventId")
-    suspend fun queryChildEvents(parentEventId: Int): List<EventEntity>?
+    suspend fun queryChildEvents(parentEventId: Long): List<EventEntity>?
 
+    @Transaction
+    @Query("SELECT * FROM event WHERE parentEventId = :parentEventId")
+    suspend fun queryChildrenEventsByParentId(parentEventId: Long): List<EventWithParentEntity>?
 }

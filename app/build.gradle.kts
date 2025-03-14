@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.devtools.ksp") version "2.1.0-1.0.29"
+    id("androidx.navigation.safeargs.kotlin") version "2.8.8"
 }
 
 android {

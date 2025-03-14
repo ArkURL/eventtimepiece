@@ -60,11 +60,11 @@
                 android:layout_height="wrap_content"
                 />
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_add"
+                android:id="@+id/button_info"
                 android:layout_width="@dimen/cardview_button_size"
                 android:layout_height="wrap_content"
                 app:cornerRadius="@dimen/cardview_button_icon_radius"
-                app:icon="@android:drawable/ic_input_add"
+                app:icon="@android:drawable/ic_menu_info_details"
                 app:iconSize="@dimen/cardview_button_icon_size"
                 app:iconGravity="textStart"
                 android:backgroundTint="?colorPrimary"

@@ -17,4 +17,26 @@
     <string name="delete_event_dialog_title">删除事项</string>
     <string name="delete_event_dialog_content">是否确定删除事项？</string>
     <string name="delete">删除</string>
+    <string name="child_fragment_title">子级事项</string>
+    <string name="new_some_child_event_hint">尝试添加一些子级事项吧✨</string>
+    <string name="text_event_created_time">事项创建时间：</string>
+    <string name="text_event_updated_time">事项更新时间：</string>
+    <string name="create_time_holder">2025.03.20</string>
+    <string name="update_time_holder">2025.03.20</string>
+    <string name="close">关闭</string>
+    <string name="text_parent_event_info">事项详情</string>
+    <string name="text_parent_event">父级事项</string>
+    <string name="parent_event_placeholder">父级事项名称</string>
+    <string name="edit_event_success">编辑事项成功</string>
+    <string name="child_event_info_title">子事项信息</string>
+    <string name="child_event_edit_title">编辑子事项</string>
+    <string name="start">开始</string>
+    <string name="stop">停止</string>
+    <string name="event_timer_title">事项计时器</string>
+    <string name="event_name">事项名称</string>
+    <string name="colon">:</string>
+    <string name="zero">0</string>
+    <string name="exit">退出</string>
+    <string name="finish">完成</string>
+    <string name="pause">暂停</string>
 </resources>

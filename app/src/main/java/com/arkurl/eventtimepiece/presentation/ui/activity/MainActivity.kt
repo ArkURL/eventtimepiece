@@ -1,40 +1,66 @@
 package com.arkurl.eventtimepiece.presentation.ui.activity
 
-import android.graphics.Color
+import android.Manifest.permission
+import android.Manifest.permission.FOREGROUND_SERVICE_SPECIAL_USE
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.navigation.NavController
 import com.arkurl.eventtimepiece.R
 import com.arkurl.eventtimepiece.data.local.database.AppDatabase
-import com.arkurl.eventtimepiece.data.local.model.Event
 import com.arkurl.eventtimepiece.data.repository.EventRepository
 import com.arkurl.eventtimepiece.databinding.ActivityMainBinding
 import com.arkurl.eventtimepiece.databinding.DialogAboutBinding
-import com.arkurl.eventtimepiece.databinding.DialogParentEventAddBinding
-import com.arkurl.eventtimepiece.presentation.ui.adapter.EventAdapter
-import com.arkurl.eventtimepiece.presentation.ui.fragment.HomeFragment
 import com.arkurl.eventtimepiece.presentation.viewmodel.EventViewModel
 import com.arkurl.eventtimepiece.presentation.viewmodel.EventViewModelFactory
 import com.arkurl.eventtimepiece.util.AppUtils
-import com.arkurl.eventtimepiece.util.LogTags
 import com.arkurl.eventtimepiece.util.toHtml
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
+import java.util.jar.Manifest
 
 class MainActivity: AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var eventViewModel: EventViewModel
-    private lateinit var eventAdapter: EventAdapter
+    private lateinit var navHostFragment: NavHostFragment
+    private lateinit var navController: NavController
+
+    companion object {
+        private val TAG = MainActivity::class.java.simpleName
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission())
+    { isGranted ->
+        if (isGranted) {
+            // Permission is granted
+            Log.d(TAG, "permission: granted")
+        } else {
+            // Permission is denied
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            if (checkSelfPermission(FOREGROUND_SERVICE_SPECIAL_USE)
+                != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(FOREGROUND_SERVICE_SPECIAL_USE)
+            } else {
+                Log.d(TAG, "onStart: granted") // ✅ 已有权限，直接启动
+            }
+        } else {
+            Log.d(TAG, "onStart: no need to grant") // ✅ Android 13 以下不需要权限
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,13 +68,16 @@ class MainActivity: AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, HomeFragment())
-                .commit()
-        }
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
+
+        setupActionBarWithNavController(this, navController)
 
         init()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
     private fun init() {
@@ -57,116 +86,7 @@ class MainActivity: AppCompatActivity() {
         val factory = EventViewModelFactory(repository)
 
         eventViewModel = ViewModelProvider(this, factory)[EventViewModel::class.java]
-
-        eventAdapter = EventAdapter(
-            onItemClick = ::handleItemClick,
-            onAddEventListener = ::handleAdapterAddEvent,
-            onEditEventListener = ::handleAdapterEditEvent,
-            onDeleteEventListener = ::handleAdapterDeleteEvent
-        )
-
-        binding.eventCardRecycleView.adapter = eventAdapter
-        binding.eventCardRecycleView.layoutManager = LinearLayoutManager(this)
-
-
-
-        eventViewModel.eventList.observe(this) { events ->
-            if (events.isNullOrEmpty()) {
-                binding.welcomeText.visibility = View.VISIBLE
-                binding.eventCardRecycleView.visibility = View.GONE
-            } else {
-                binding.welcomeText.visibility = View.GONE
-                binding.eventCardRecycleView.visibility = View.VISIBLE
-                eventAdapter.submitList(events)
-            }
-        }
-
-        eventViewModel.loadAllEvents()
-
-        binding.floatingActionButton.setOnClickListener {
-            showAddNewEventDialog()
-        }
     }
-
-    private fun showAddNewEventDialog() {
-        val binding = DialogParentEventAddBinding.inflate(layoutInflater)
-
-        val dialog = MaterialAlertDialogBuilder(this)
-            .setView(binding.root)
-            .create()
-
-        binding.btnCancel.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        binding.btnOk.setOnClickListener {
-            val title = binding.editTitle.text.toString().trim()
-            val description = binding.editDescription.text.toString().trim()
-
-            if (title.isEmpty()) {
-                binding.editTitle.error = getString(R.string.event_title_is_empty_hint)
-                return@setOnClickListener
-            }
-
-            eventViewModel.insert(title, description, null)
-            dialog.dismiss()
-            Toast.makeText(this, getString(R.string.add_event_success), Toast.LENGTH_SHORT).show()
-        }
-
-        dialog.show()
-    }
-
-    private fun showDeleteEventDialog(event: Event) {
-        val warningIcon = ContextCompat.getDrawable(this, android.R.drawable.ic_dialog_alert)
-        warningIcon?.let {
-            DrawableCompat.setTint(it, ContextCompat.getColor(this, com.google.android.material.R.color.design_default_color_error))
-        }
-
-        val dialog = MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.delete_event_dialog_title)
-            .setMessage(R.string.delete_event_dialog_content)
-            .setIcon(warningIcon)
-            .setPositiveButton(R.string.delete) { dialog, _ ->
-                eventViewModel.deleteEvent(event)
-                dialog.dismiss()
-            }
-            .setNegativeButton(R.string.cancel) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.apply {
-                setBackgroundColor(ContextCompat.getColor(this@MainActivity, com.google.android.material.R.color.design_default_color_error))
-                setTextColor(ContextCompat.getColor(this@MainActivity, android.R.color.white))
-            }
-
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.apply {
-                setBackgroundColor(ContextCompat.getColor(this@MainActivity, android.R.color.transparent))
-                setTextColor(MaterialColors.getColor(dialog.context, com.google.android.material.R.attr.colorOnSurface, Color.GRAY))
-            }
-        }
-
-        dialog.show()
-    }
-
-    private fun handleItemClick(event: Event) {
-        Log.d(LogTags.MAIN_ACTIVITY, "handleItemClick: ")
-    }
-
-    private fun handleAdapterAddEvent(event: Event) {
-        Log.d(LogTags.MAIN_ACTIVITY, "Add event: $event")
-    }
-
-    private fun handleAdapterEditEvent(event: Event) {
-        Log.d(LogTags.MAIN_ACTIVITY, "Edit event: $event")
-    }
-
-    private fun handleAdapterDeleteEvent(event: Event) {
-        Log.d(LogTags.MAIN_ACTIVITY, "Delete event: $event")
-        showDeleteEventDialog(event)
-    }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)

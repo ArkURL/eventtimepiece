@@ -9,15 +9,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arkurl.eventtimepiece.R
-import com.arkurl.eventtimepiece.data.local.model.Event
+import com.arkurl.eventtimepiece.data.local.model.EventWithParentModel
 import java.util.Locale
 
-class EventAdapter(
-    private val onItemClick: (Event) -> Unit,
-    private val onInfoEventListener: (Event) -> Unit,
-    private val onEditEventListener: (Event) -> Unit,
-    private val onDeleteEventListener: (Event) -> Unit
-    ): ListAdapter<Event, EventAdapter.ViewHolder>(DIFF_CALLBACK) {
+class ChildEventAdapter(
+    private val onItemClick: (EventWithParentModel) -> Unit,
+    private val onInfoEventListener: (EventWithParentModel) -> Unit,
+    private val onEditEventListener: (EventWithParentModel) -> Unit,
+    private val onDeleteEventListener: (EventWithParentModel) -> Unit
+): ListAdapter<EventWithParentModel, ChildEventAdapter.ViewHolder>(DIFF_CALLBACK) {
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val eventTitle: TextView = view.findViewById(R.id.event_title)
         val eventDescription: TextView = view.findViewById(R.id.event_description)
@@ -36,8 +36,8 @@ class EventAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = getItem(position)
-        holder.eventTitle.text = event.name
-        holder.eventDescription.text = event.description
+        holder.eventTitle.text = event.eventName
+        holder.eventDescription.text = event.eventDescription
         holder.eventTime.text = formatTimeDuration(event.timeCost)
 
         holder.itemView.setOnClickListener {
@@ -70,12 +70,12 @@ class EventAdapter(
     }
 
     companion object {
-        private var DIFF_CALLBACK = object : DiffUtil.ItemCallback<Event>() {
-            override fun areItemsTheSame(oldItem: Event, newItem: Event): Boolean {
+        private var DIFF_CALLBACK = object : DiffUtil.ItemCallback<EventWithParentModel>() {
+            override fun areItemsTheSame(oldItem: EventWithParentModel, newItem: EventWithParentModel): Boolean {
                 return oldItem.id == newItem.id
             }
 
-            override fun areContentsTheSame(oldItem: Event, newItem: Event): Boolean {
+            override fun areContentsTheSame(oldItem: EventWithParentModel, newItem: EventWithParentModel): Boolean {
                 return oldItem == newItem
             }
         }

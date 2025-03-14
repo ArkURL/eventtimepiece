@@ -2,7 +2,47 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mainActivity">
+    app:startDestination="@id/homeFragment">
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.arkurl.eventtimepiece.presentation.ui.fragment.HomeFragment"
+        android:label="@string/app_name">
+        <action
+            android:id="@+id/action_home_to_child_event"
+            app:destination="@id/childEventFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/homeFragment" />
+    </fragment>
 
+    <fragment
+        android:id="@+id/childEventFragment"
+        android:name="com.arkurl.eventtimepiece.presentation.ui.fragment.ChildEventFragment"
+        android:label="@string/child_fragment_title"
+        >
+        <argument
+            android:name="eventId"
+            app:argType="long"
+            />
+        <action
+            android:id="@+id/action_child_event_to_event_timer"
+            app:destination="@id/eventTimerFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
 
+    <fragment
+        android:id="@+id/eventTimerFragment"
+        android:name="com.arkurl.eventtimepiece.presentation.ui.fragment.TimerFragment"
+        android:label="@string/event_timer_title"
+        >
+        <argument
+            android:name="eventId"
+            app:argType="long"
+            />
+    </fragment>
 </navigation>

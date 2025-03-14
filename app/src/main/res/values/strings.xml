@@ -21,4 +21,26 @@
     <string name="delete_event_dialog_title">Delete Event</string>
     <string name="delete_event_dialog_content">Are you sure to delete this event?</string>
     <string name="delete">Delete</string>
+    <string name="child_fragment_title">Child Event</string>
+    <string name="new_some_child_event_hint">Try to add some child event✨</string>
+    <string name="text_event_created_time">Event Create time:</string>
+    <string name="text_event_updated_time">Event update time:</string>
+    <string name="create_time_holder">2025.03.20</string>
+    <string name="update_time_holder">2025.03.20</string>
+    <string name="close">Close</string>
+    <string name="text_parent_event_info">Event Info</string>
+    <string name="text_parent_event">Parent Event</string>
+    <string name="parent_event_placeholder">Parent event name</string>
+    <string name="edit_event_success">Edit event success</string>
+    <string name="child_event_info_title">Child Event Info</string>
+    <string name="child_event_edit_title">Edit Child Event</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="event_timer_title">Event Timer</string>
+    <string name="event_name">Event Name</string>
+    <string name="colon">:</string>
+    <string name="zero">0</string>
+    <string name="pause">Pause</string>
+    <string name="exit">Exit</string>
+    <string name="finish">Finish</string>
 </resources>

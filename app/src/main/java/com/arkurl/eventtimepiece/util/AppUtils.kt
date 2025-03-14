@@ -26,6 +26,6 @@ object AppUtils {
     }
 
     fun getProjectLinkHtml(): String {
-        return "<b><a href=\"https://github.com/arkurl/EventTimepiece\">Github</a></b>"
+        return "<b><a href=\"https://github.com/ArkURL/eventtimepiece\">Github</a></b>"
     }
 }

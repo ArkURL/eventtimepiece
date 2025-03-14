@@ -1,0 +1,29 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 背景圆环 -->
+    <item>
+        <shape
+            android:shape="ring"
+            android:innerRadiusRatio="3"
+            android:thicknessRatio="0.15"
+            android:useLevel="false">
+            <solid android:color="#E0D4F4"/>
+        </shape>
+    </item>
+
+    <!-- 前景进度条 -->
+    <item android:id="@android:id/progress">
+        <shape
+            android:shape="ring"
+            android:innerRadiusRatio="3"
+            android:thicknessRatio="0.15"
+            android:useLevel="true">
+            <gradient
+                android:startColor="#6A0DAD"
+                android:centerColor="#9C27B0"
+                android:endColor="#D1C4E9"
+                android:angle="270"/>
+        </shape>
+    </item>
+
+</layer-list>
