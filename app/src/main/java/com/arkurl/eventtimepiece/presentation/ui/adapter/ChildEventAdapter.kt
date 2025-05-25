@@ -36,9 +36,9 @@ class ChildEventAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = getItem(position)
-        holder.eventTitle.text = event.eventName
-        holder.eventDescription.text = event.eventDescription
-        holder.eventTime.text = formatTimeDuration(event.timeCost)
+        holder.eventTitle.text = event.selfModel.name
+        holder.eventDescription.text = event.selfModel.description
+        holder.eventTime.text = formatTimeDuration(event.selfModel.timeCost)
 
         holder.itemView.setOnClickListener {
             onItemClick(event)
@@ -72,7 +72,7 @@ class ChildEventAdapter(
     companion object {
         private var DIFF_CALLBACK = object : DiffUtil.ItemCallback<EventWithParentModel>() {
             override fun areItemsTheSame(oldItem: EventWithParentModel, newItem: EventWithParentModel): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.selfModel.id == newItem.selfModel.id
             }
 
             override fun areContentsTheSame(oldItem: EventWithParentModel, newItem: EventWithParentModel): Boolean {

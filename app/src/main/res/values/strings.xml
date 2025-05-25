@@ -43,4 +43,7 @@
     <string name="pause">Pause</string>
     <string name="exit">Exit</string>
     <string name="finish">Finish</string>
+    <string name="confirm_back_title">Confirm Back?</string>
+    <string name="confirm_back_message">Exit the fragment will stop the time counter</string>
+    <string name="timer_is_running">Timer is running</string>
 </resources>

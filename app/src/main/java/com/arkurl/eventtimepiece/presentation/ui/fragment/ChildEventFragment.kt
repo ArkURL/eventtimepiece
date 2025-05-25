@@ -113,7 +113,7 @@ class ChildEventFragment: Fragment(R.layout.fragment_child_event) {
         Log.d(TAG, "handleItemClick: [event]: $event")
 
         val actionChildEventToEventTimer =
-            ChildEventFragmentDirections.actionChildEventToEventTimer(event.id)
+            ChildEventFragmentDirections.actionChildEventToEventTimer(event.selfModel.id)
 
         navController.navigate(actionChildEventToEventTimer)
     }
@@ -124,11 +124,11 @@ class ChildEventFragment: Fragment(R.layout.fragment_child_event) {
             .setView(binding.root)
             .create()
 
-        binding.textTitle.text = event.eventName
-        binding.textDescription.text = event.eventDescription
-        binding.textCreatedTime.text = TimeUtils.formatInstant(event.eventCreateTime)
-        binding.textUpdatedTime.text = TimeUtils.formatInstant(event.eventUpdateTime)
-        binding.textParentEventName.text = event.parentEventName
+        binding.textTitle.text = event.selfModel.name
+        binding.textDescription.text = event.selfModel.description
+        binding.textCreatedTime.text = TimeUtils.formatInstant(event.selfModel.createTime)
+        binding.textUpdatedTime.text = TimeUtils.formatInstant(event.selfModel.updateTime)
+        binding.textParentEventName.text = event.parentModel.name
 
         binding.btnOk.setOnClickListener {
             dialog.dismiss()
@@ -143,11 +143,11 @@ class ChildEventFragment: Fragment(R.layout.fragment_child_event) {
             .setView(binding.root)
             .create()
 
-        binding.textParentEventName.text = event.parentEventName
-        binding.editTitle.setText(event.eventName)
-        binding.editDescription.setText(event.eventDescription)
-        binding.textCreatedTime.text = TimeUtils.formatInstant(event.eventCreateTime)
-        binding.textUpdatedTime.text = TimeUtils.formatInstant(event.eventUpdateTime)
+        binding.textParentEventName.text = event.parentModel.name
+        binding.editTitle.setText(event.selfModel.name)
+        binding.editDescription.setText(event.selfModel.description)
+        binding.textCreatedTime.text = TimeUtils.formatInstant(event.selfModel.createTime)
+        binding.textUpdatedTime.text = TimeUtils.formatInstant(event.selfModel.updateTime)
 
         binding.btnOk.setOnClickListener {
             val title = binding.editTitle.text.toString().trim()

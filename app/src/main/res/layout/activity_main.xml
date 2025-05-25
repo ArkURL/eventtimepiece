@@ -9,14 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
         android:theme="@style/Theme.Material3.DynamicColors.DayNight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:title="@string/app_name"
-        app:titleTextColor="?attr/colorOnSurface"
+        app:titleTextColor="?attr/colorOnPrimary"
         app:menu="@menu/menu_main"
+        android:fitsSystemWindows="true"
         />
 
     <androidx.fragment.app.FragmentContainerView
@@ -28,5 +28,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph"
+        android:fitsSystemWindows="true"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

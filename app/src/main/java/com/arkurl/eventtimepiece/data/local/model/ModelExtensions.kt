@@ -29,14 +29,6 @@ fun Event.toEntity(): EventEntity {
 
 fun EventWithParentEntity.toModel(): EventWithParentModel {
     return EventWithParentModel(
-        parentId = this.parentEventEntity.id,
-        parentEventName = this.parentEventEntity.name,
-        id = this.eventEntity.id,
-        eventName = this.eventEntity.name,
-        eventDescription = this.eventEntity.description,
-        eventCreateTime = this.eventEntity.createTime,
-        eventUpdateTime = this.eventEntity.updateTime,
-        timeCost = this.eventEntity.timeCost,
         selfModel = this.eventEntity.toModel(),
         parentModel = this.parentEventEntity.toModel()
     )

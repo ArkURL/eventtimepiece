@@ -1,5 +1,6 @@
 package com.arkurl.eventtimepiece.service
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
@@ -12,84 +13,120 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.arkurl.eventtimepiece.R
+import com.arkurl.eventtimepiece.data.local.dao.EventDao
+import com.arkurl.eventtimepiece.data.local.database.AppDatabase
+import com.arkurl.eventtimepiece.util.TimeUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class TimerService : Service() {
     private val binder = TimerBinder()
+    private var eventId: Long = -1
     private val _elapsedTime = MutableStateFlow(0L)
     val elapsedTime: StateFlow<Long> get() = _elapsedTime
-    private var isRunning = false
+    private var timerJob: Job? = null
+    private val serviceScope = CoroutineScope(Dispatchers.Default + Job())
 
-    private val handler = Handler(Looper.getMainLooper())
-    private var runnable: Runnable? = null
+    private lateinit var database: AppDatabase
+    private lateinit var eventDao: EventDao
+
 
     companion object {
         private val TAG = TimerService::class.java.simpleName
+        private val CHANNEL_ID: String
+            get() = "TimerServiceChannel"
+        private val CHANNEL_NAME: String
+            get() = "Timer Service Channel"
+        private val NOTIFICATION_ID: Int
+            get() = 1
     }
 
-    inner class TimerBinder : Binder() {
+    inner class TimerBinder: Binder() {
         fun getService(): TimerService = this@TimerService
+
+        fun getElapsedTime(): Long = _elapsedTime.value
     }
 
-    override fun onBind(intent: Intent?): IBinder = binder
+    override fun onBind(intent: Intent?): IBinder? {
+        Log.d(TAG, "onBind: ")
+        return binder
+    }
 
     override fun onCreate() {
         super.onCreate()
-        createNotificationChannel()
-        startForegroundService()
-        startTimer()
+        Log.d(TAG, "onCreate: service created")
+        database = AppDatabase.getDatabaseInstance(this)
+        eventDao = database.eventDao()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy: service destroyed")
+        stopForeground(STOP_FOREGROUND_REMOVE)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when (intent?.action) {
-            "ACTION_PAUSE" -> pauseTimer()
-            "ACTION_RESUME" -> startTimer()
-            "ACTION_STOP" -> stopTimer()
+        Log.d(TAG, "onStartCommand: service started")
+        eventId = intent?.getLongExtra("EVENT_ID", -1L) ?: -1L
+        if (eventId == -1L) {
+            Log.d(TAG, "onStartCommand: invalid event")
+            stopSelf()
+            return START_NOT_STICKY
         }
+
+        serviceScope.launch {
+            val event = eventDao.querySpecifyEvent(eventId)
+            _elapsedTime.value = event.timeCost
+        }
+
+        startForegroundService()
         return START_STICKY
     }
 
-    fun startTimer() {
-        if (isRunning) return
-        isRunning = true
-        runnable = object : Runnable {
-            override fun run() {
-                _elapsedTime.value = _elapsedTime.value + 1
-                _elapsedTime.tryEmit(_elapsedTime.value) // 🔴 确保 `StateFlow` 立即通知更新
-                handler.postDelayed(this, 1000)
+    fun startTimer(event) {
+        if (timerJob != null) return // 防止重复启动计时器
+
+        timerJob = serviceScope.launch {
+            while (isActive) {
+                _elapsedTime.value += 1 // 直接自增，避免 `elapsedTime.value` 的多线程访问问题
+                updateNotification()
+                delay(1000) // 1秒更新一次
             }
         }
-        handler.postDelayed(runnable!!, 1000)
     }
 
     fun pauseTimer() {
-        isRunning = false
-        runnable?.let { handler.removeCallbacks(it) }
-    }
-
-    fun stopTimer() {
-        isRunning = false
-        runnable?.let { handler.removeCallbacks(it) }
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
-    }
-
-    private fun createNotificationChannel() {
-        val channel = NotificationChannel("timer_channel", "计时器服务", NotificationManager.IMPORTANCE_LOW)
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
+        timerJob?.cancel()
+        timerJob = null
     }
 
     private fun startForegroundService() {
-        val notification = NotificationCompat.Builder(this, "timer_channel")
-            .setContentTitle("计时器正在运行")
-            .setContentText("计时中...")
+        val notification = createNotification()
+        startForeground(NOTIFICATION_ID, notification)
+    }
+
+    private fun createNotification(): Notification {
+        val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(channel)
+
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle(getString(R.string.timer_is_running))
+            .setContentText(TimeUtils.formatTimeCost(_elapsedTime.value))
             .setSmallIcon(R.drawable.timer_24px)
+            .setOngoing(true)
             .build()
-        startForeground(1, notification)
+    }
+
+    private fun updateNotification() {
+        val notification = createNotification()
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.notify(NOTIFICATION_ID, notification)
     }
 }
